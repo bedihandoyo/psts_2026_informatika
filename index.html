@@ -10,65 +10,56 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
-        :root { --blue: #004a99; --dark: #002b5c; --light: #f4f7f9; --yellow: #ffcc00; --red: #d9534f; }
-        body { 
-            font-family: 'Segoe UI', Tahoma, sans-serif; 
-            margin: 0; 
-            background: var(--light); 
-            user-select: none;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+        :root { --blue: #004a99; --dark: #002b5c; --light: #f4f7f9; --yellow: #ffcc00; --red: #d9534f; --gray: #6c757d; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; background: var(--light); user-select: none; display: flex; flex-direction: column; min-height: 100vh; }
         
+        /* Layout */
         .full-center { flex: 1; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--blue) 0%, #0088ff 100%); padding: 20px; box-sizing: border-box; }
         .box-ui { background: white; padding: 35px; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); width: 100%; max-width: 450px; }
         
-        input { width: 100%; padding: 14px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 1rem; }
-        .btn { border: none; padding: 14px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; color: white; width: 100%; font-size: 1rem; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+        .btn { border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; color: white; font-size: 0.9rem; }
         .btn-blue { background: var(--blue); }
         .btn-green { background: #28a745; }
         .btn-red { background: var(--red); }
-        .btn-gray { background: #6c757d; }
+        .btn-yellow { background: var(--yellow); color: black; }
+        .btn-gray { background: var(--gray); }
 
+        /* Admin UI */
         .admin-container { display: flex; flex: 1; display: none; }
         .sidebar { width: 260px; background: var(--dark); color: white; flex-shrink: 0; }
         .menu-item { padding: 15px 25px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .menu-item.active { background: var(--blue); border-left: 5px solid var(--yellow); }
         .main-content { flex: 1; overflow-y: auto; padding: 40px; background: white; }
 
+        /* Soal UI */
         .soal-container { display: none; padding: 20px; flex: 1; }
-        .card-soal { background: white; max-width: 900px; margin: auto; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border-top: 8px solid var(--blue); }
-        .option { border: 2px solid #eee; padding: 15px; margin-bottom: 12px; border-radius: 10px; cursor: pointer; text-align: left; display: block; width: 100%; background: none; font-size: 1rem; }
+        .card-soal { background: white; max-width: 1000px; margin: auto; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border-top: 8px solid var(--blue); overflow: hidden; }
+        .soal-wrapper { display: flex; flex-wrap: wrap; min-height: 400px; }
+        .soal-main { flex: 1; padding: 35px; min-width: 300px; }
+        .soal-nav-bar { width: 280px; padding: 20px; background: #f8f9fa; border-left: 1px solid #eee; }
+        
+        .grid-nomor { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 15px; }
+        .btn-nomor { padding: 10px 5px; border: 1px solid #ddd; background: white; border-radius: 5px; cursor: pointer; font-size: 0.8rem; font-weight: bold; text-align: center; }
+        .btn-nomor.filled { background: var(--blue); color: white; border-color: var(--blue); }
+        .btn-nomor.doubt { background: var(--yellow); color: black; border-color: var(--yellow); }
+        .btn-nomor.active-now { border: 2px solid black; }
+
+        .option { border: 2px solid #eee; padding: 15px; margin-bottom: 10px; border-radius: 10px; cursor: pointer; text-align: left; display: flex; align-items: center; width: 100%; background: white; font-size: 1rem; }
+        .option:hover { border-color: var(--blue); }
         .option.selected { background: var(--blue); color: white; border-color: var(--blue); }
+        
+        .option img { max-height: 120px; border-radius: 5px; margin: 5px; display: block; }
 
-        .badge { padding: 5px 10px; border-radius: 4px; font-size: 0.8rem; color: white; font-weight: bold; }
-        .bg-working { background: #f0ad4e; }
-        .bg-done { background: #5cb85c; }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
-        th { background: var(--blue); color: white; }
+        th { background: #f4f4f4; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; color: white; }
+        .bg-working { background: orange; }
+        .bg-done { background: green; }
         .hidden { display: none !important; }
-
-        /* FOOTER STYLING */
-        footer {
-            background: #fff;
-            color: #666;
-            text-align: center;
-            padding: 15px;
-            font-size: 13px;
-            border-top: 1px solid #ddd;
-        }
-        /* Footer transparan khusus halaman login agar tidak kontras dengan gradient */
-        #view-login footer, #view-konfirmasi footer {
-            background: transparent;
-            color: white;
-            border: none;
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-        }
+        
+        footer { background: white; padding: 15px; text-align: center; border-top: 1px solid #ddd; font-size: 0.8rem; }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -77,42 +68,47 @@
         <div id="view-login" class="full-center">
             <div class="box-ui" style="text-align: center;">
                 <img src="https://i.ibb.co.com/9xbgm1B/cjr.png" width="70">
-                <h2 style="color:var(--blue);">INFORMATIKA</h2>
+                <h2 style="color:var(--blue);">INFORMATIKA 2026</h2>
                 <input type="text" id="in-nama" placeholder="Nama Lengkap">
                 <input type="text" id="in-kelas" placeholder="Kelas">
-                <button class="btn btn-blue" onclick="keKonfirmasi()">LOGIN</button>
+                <button class="btn btn-blue" style="width:100%" onclick="keKonfirmasi()">MASUK</button>
             </div>
-            <footer style="position: absolute; bottom: 0; color: white; border:none;">
-                
-            </footer>
         </div>
 
         <div id="view-konfirmasi" class="full-center hidden">
             <div class="box-ui">
-                <h3 style="color:var(--blue); border-bottom: 2px solid var(--yellow);">Konfirmasi Tes</h3>
+                <h3 style="color:var(--blue); border-bottom: 2px solid var(--yellow); padding-bottom:10px;">Konfirmasi Peserta</h3>
                 <p>Nama: <strong id="lbl-nama"></strong></p>
-                <div style="background: #fff9e6; padding: 15px; border-radius: 8px; font-size: 0.85rem; border-left: 5px solid var(--yellow); margin-bottom:15px;">
-                    <strong>PENTING:</strong> Berdoalah sebelum mulai. Status Anda akan dipantau oleh Proktor secara real-time.
-                </div>
-                <input type="text" id="in-token" placeholder="Masukkan Token" style="text-align:center; font-weight:bold; border: 2px solid var(--blue);">
-                <button class="btn btn-blue" onclick="mulaiUjian()">MULAI SEKARANG</button>
+                <p>Status: <strong>Siap Ujian</strong></p>
+                <input type="text" id="in-token" placeholder="Masukkan Token" style="text-align:center; font-weight:bold; font-size:1.2rem;">
+                <button class="btn btn-blue" style="width:100%" onclick="mulaiUjian()">MULAI UJIAN</button>
             </div>
         </div>
 
         <div id="view-soal" class="soal-container">
             <div class="card-soal">
-                <div style="padding: 20px 30px; background: #fafafa; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
-                    <span id="no-soal-title" style="font-weight: bold;">SOAL NO --</span>
-                    <span id="timer-siswa" style="background: var(--red); color: white; padding: 6px 15px; border-radius: 20px; font-weight: bold;">00:00</span>
+                <div style="padding: 15px 30px; background: #fafafa; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                    <span id="no-soal-title" style="font-weight: bold; color: var(--blue);">SOAL NO 1</span>
+                    <span id="timer-siswa" style="background: var(--red); color: white; padding: 6px 15px; border-radius: 20px; font-weight: bold;">00:00:00</span>
                 </div>
-                <div style="padding: 35px;">
-                    <center><img id="display-gambar" style="max-width:100%; display:none; border-radius:10px; margin-bottom:20px;"></center>
-                    <h3 id="display-pertanyaan">...</h3>
-                    <div id="opsi-list"></div>
-                    <div style="display: flex; justify-content: space-between; margin-top: 40px; border-top: 1px solid #eee; padding-top: 25px;">
-                        <button class="btn btn-gray" style="width:auto;" onclick="navSoal(-1)">KEMBALI</button>
-                        <button id="btn-next" class="btn btn-blue" style="width:auto;" onclick="navSoal(1)">SELANJUTNYA</button>
-                        <button id="btn-done" class="btn btn-green" style="width:auto; display:none;" onclick="selesaiUjian()">KONFIRMASI SELESAI</button>
+                <div class="soal-wrapper">
+                    <div class="soal-main">
+                        <div id="area-soal">
+                            <center><img id="display-gambar" style="max-width:100%; max-height:250px; display:none; margin-bottom:20px; border-radius:8px;"></center>
+                            <p id="display-pertanyaan" style="font-size: 1.1rem; line-height: 1.6; font-weight: 500;">Sedang memuat soal...</p>
+                            <div id="opsi-list"></div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+                            <button class="btn btn-gray" onclick="navSoal(-1)">SEBELUMNYA</button>
+                            <button id="btn-ragu" class="btn btn-yellow" onclick="toggleRagu()">RAGU-RAGU</button>
+                            <button id="btn-next" class="btn btn-blue" style="margin-left:auto;" onclick="navSoal(1)">BERIKUTNYA</button>
+                            <button id="btn-done" class="btn btn-green" style="margin-left:auto; display:none;" onclick="selesaiUjian()">SELESAI UJIAN</button>
+                        </div>
+                    </div>
+                    <div class="soal-nav-bar">
+                        <div style="font-weight: bold; font-size: 0.9rem; margin-bottom: 10px; color: var(--gray);">NAVIGASI SOAL</div>
+                        <div id="grid-nomor" class="grid-nomor"></div>
                     </div>
                 </div>
             </div>
@@ -121,50 +117,96 @@
 
     <div id="section-admin" class="admin-container">
         <div class="sidebar">
-            <div style="padding: 20px; text-align: center; font-weight: bold; background: rgba(0,0,0,0.2);">PROKTOR ANBK</div>
+            <div style="padding: 25px; text-align: center; font-weight: bold; background: rgba(0,0,0,0.2);">ADMIN PANEL</div>
             <div class="menu-item active" onclick="switchTab('tab-dash', this)">Dashboard</div>
             <div class="menu-item" onclick="switchTab('tab-import', this)">Import Soal</div>
             <div class="menu-item" onclick="switchTab('tab-hasil', this)">Rekap Nilai</div>
-            <div style="position: absolute; bottom: 20px; width: 260px; font-size: 11px; text-align: center; opacity: 0.5;">
-                v2.0 Build 2026
-            </div>
+            <div class="menu-item" onclick="switchTab('tab-peserta', this)">Daftar Peserta</div>
         </div>
         <div class="main-content">
             <div id="tab-dash" class="admin-tab">
-                <h1>Kontrol Proktor</h1>
-                <div style="background:#f9f9f9; padding:20px; border-radius:10px;">
-                    Token: <input type="text" id="adm-token" style="width:200px; text-transform:uppercase;">
-                    <button class="btn btn-blue" style="width:auto" onclick="updateToken()">Update Token</button>
-                    <hr>
-                    Durasi (Menit): <input type="number" id="adm-timer" value="60" style="width:80px;">
-                    <button class="btn btn-blue" style="width:auto; background:orange" onclick="updateTimer()">Set Waktu & Mulai</button>
+                <h1>Dashboard Proktor</h1>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div style="background:#f9f9f9; padding:20px; border-radius:10px; border:1px solid #ddd;">
+                        <h3>Kontrol Ujian</h3>
+                        <label>Token Saat Ini:</label>
+                        <input type="text" id="adm-token" style="font-weight:bold; text-transform:uppercase;">
+                        <button class="btn btn-blue" onclick="updateToken()">UPDATE TOKEN</button>
+                        <hr style="margin:20px 0;">
+                        <label>Set Durasi (Menit):</label>
+                        <input type="number" id="adm-timer" value="60">
+                        <button class="btn btn-yellow" style="width:100%" onclick="updateTimer()">MULAI TIMER UJIAN</button>
+                    </div>
+                    <div style="background:var(--dark); color:white; padding:20px; border-radius:10px; text-align:center;">
+                        <h3 style="color:var(--yellow)">SISA WAKTU</h3>
+                        <div id="adm-timer-display" style="font-size: 4rem; font-weight: bold;">00:00:00</div>
+                        <p id="adm-timer-status">Menunggu instruksi...</p>
+                    </div>
                 </div>
             </div>
+
             <div id="tab-import" class="admin-tab hidden">
-                <h1>Import Excel</h1>
-                <input type="file" id="input-excel" accept=".xlsx">
-                <button class="btn btn-green" style="width:auto" onclick="prosesExcel()">PROSES</button>
+                <h1>Import Soal Excel</h1>
+                <div style="background:#f9f9f9; padding:20px; border-radius:10px;">
+                    <input type="file" id="input-excel" accept=".xlsx">
+                    <button class="btn btn-green" onclick="prosesExcel()">UPLOAD SOAL</button>
+                </div>
             </div>
+
             <div id="tab-hasil" class="admin-tab hidden">
-                <h1>Rekap Nilai & Status</h1>
-                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                    <button class="btn btn-green" style="width:auto" onclick="exportExcel()">Download Excel</button>
-                    <button class="btn btn-red" style="width:auto" onclick="clearData()">Hapus Semua Data</button>
+                <h1>Rekap Nilai Siswa</h1>
+                <div style="margin-bottom:15px; display:flex; gap:10px;">
+                    <button class="btn btn-green" onclick="exportExcel('table-nilai', 'Hasil_Ujian')">Download Excel</button>
+                    <button class="btn btn-red" onclick="bulkDelete('hasil')">Hapus Terpilih</button>
                 </div>
                 <table id="table-nilai">
-                    <thead><tr><th>Nama</th><th>Kelas</th><th>Nilai</th><th>Waktu</th><th>Status</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" onclick="toggleSelectAll('check-hasil', this)"></th>
+                            <th>No</th>
+                            <th>Nama</th>
+                            <th>Kelas</th>
+                            <th>Nilai</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
                     <tbody id="table-nilai-body"></tbody>
+                </table>
+            </div>
+
+            <div id="tab-peserta" class="admin-tab hidden">
+                <h1>Manajemen Peserta</h1>
+                <div style="background:#f9f9f9; padding:20px; border-radius:10px; margin-bottom:20px;">
+                    <div style="display:flex; gap:10px; margin-bottom:15px;">
+                        <input type="text" id="add-nama" placeholder="Nama Siswa">
+                        <input type="text" id="add-kelas" placeholder="Kelas">
+                        <button class="btn btn-blue" onclick="addPesertaManual()">Tambah</button>
+                    </div>
+                    <input type="file" id="input-excel-peserta" accept=".xlsx">
+                    <button class="btn btn-green" onclick="prosesExcelPeserta()">Import Excel Peserta</button>
+                </div>
+                <button class="btn btn-red" onclick="bulkDelete('peserta')" style="margin-bottom:10px;">Hapus Terpilih</button>
+                <table id="table-peserta">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" onclick="toggleSelectAll('check-peserta', this)"></th>
+                            <th>No</th>
+                            <th>Nama</th>
+                            <th>Kelas</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-peserta-body"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <footer id="main-footer">
-        &copy; 2026 <strong>BEDIHANDOYO</strong> - Asesmen Sumatif Tengah Semester.
-    </footer>
+    <footer>&copy; 2026 <strong>BEDIHANDOYO</strong> - Sistem Ujian Online Terintegrasi</footer>
 
 <script>
-    // --- CONFIG ---
+    // --- CONFIG FIREBASE ---
     const firebaseConfig = {
         apiKey: "AIzaSyCt3g0QEiW2MIaSMbgK4VX4pCr3TcNoKLU",
         authDomain: "psts-e6f0c.firebaseapp.com",
@@ -172,173 +214,296 @@
         storageBucket: "psts-e6f0c.firebasestorage.app",
         messagingSenderId: "471588621013",
         appId: "1:471588621013:web:37a5a3cc4f73454a0d305c",
-        measurementId: "G-DL7WVLTETC",
         databaseURL: "https://psts-e6f0c-default-rtdb.asia-southeast1.firebasedatabase.app"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let user = { nama: "", kelas: "", nilai: 0, jawaban: [] };
+    let user = { nama: "", kelas: "", jawaban: [], ragu: [] };
     let bankSoal = [];
     let currIdx = 0;
-    let timerInt;
+    let isExamStarted = false;
+    let timerInterval;
 
     // --- ANTI CURANG ---
     document.addEventListener("visibilitychange", () => {
-        if (document.hidden && !isAdmin && user.nama !== "" && document.getElementById('view-soal').style.display === 'block') {
-            alert("SISTEM: Anda meninggalkan halaman ujian. Sesi dibatalkan!");
+        if (document.hidden && isExamStarted) {
+            alert("SISTEM: Anda terdeteksi meninggalkan halaman! Ujian dibatalkan.");
             location.reload();
         }
     });
 
+    // --- LOGIKA ADMIN ---
     const isAdmin = window.location.search.includes('admin');
     if(isAdmin) {
         document.getElementById('section-siswa').classList.add('hidden');
         document.getElementById('section-admin').style.display = 'flex';
-        document.getElementById('main-footer').classList.add('hidden');
         loadAdminData();
     }
 
-    // --- SISWA LOGIC ---
-    function keKonfirmasi() {
-        user.nama = document.getElementById('in-nama').value.trim();
-        user.kelas = document.getElementById('in-kelas').value.trim();
-        if(!user.nama) return alert("Isi Nama!");
-        document.getElementById('lbl-nama').innerText = user.nama;
-        document.getElementById('view-login').classList.add('hidden');
-        document.getElementById('view-konfirmasi').classList.remove('hidden');
-    }
-
-    function mulaiUjian() {
-        const tkn = document.getElementById('in-token').value.trim().toUpperCase();
-        db.ref('token').once('value', s => {
-            if(tkn !== s.val()) return alert("Token Salah!");
-            db.ref('soal').once('value', snap => {
-                if(!snap.val()) return alert("Soal Belum Siap!");
-                bankSoal = snap.val().sort(() => Math.random() - 0.5);
-                
-                db.ref('hasil/' + user.nama).set({
-                    nama: user.nama,
-                    kelas: user.kelas,
-                    nilai: "-",
-                    waktu: "Berjalan...",
-                    status: "Sedang Mengerjakan"
-                });
-
-                document.getElementById('view-konfirmasi').classList.add('hidden');
-                document.getElementById('view-soal').style.display = 'block';
-                document.getElementById('main-footer').classList.add('hidden'); // Sembunyikan footer saat ujian
-                db.ref('timer_pusat').on('value', t => startTimer(t.val()));
-                renderSoal();
-            });
-        });
-    }
-
-    function renderSoal() {
-        const s = bankSoal[currIdx];
-        document.getElementById('no-soal-title').innerText = "SOAL NO " + (currIdx + 1) + " / " + bankSoal.length;
-        document.getElementById('display-pertanyaan').innerText = s.pertanyaan;
-        const img = document.getElementById('display-gambar');
-        if(s.gambar) { img.src = s.gambar; img.style.display = 'block'; } else { img.style.display = 'none'; }
-
-        const list = document.getElementById('opsi-list');
-        list.innerHTML = "";
-        [s.opsiA, s.opsiB, s.opsiC, s.opsiD, s.opsiE].forEach(o => {
-            if(o) {
-                const sel = user.jawaban[currIdx] === o ? 'selected' : '';
-                list.innerHTML += `<button class="option ${sel}" onclick="pilih('${o}')">${o}</button>`;
-            }
-        });
-        document.getElementById('btn-next').style.display = (currIdx === bankSoal.length - 1) ? 'none' : 'block';
-        document.getElementById('btn-done').style.display = (currIdx === bankSoal.length - 1) ? 'block' : 'none';
-    }
-
-    function pilih(v) { user.jawaban[currIdx] = v; renderSoal(); }
-    function navSoal(n) { currIdx += n; renderSoal(); }
-
-    function selesaiUjian() {
-        clearInterval(timerInt);
-        let terjawab = user.jawaban.filter(x => x).length;
-        if(terjawab < bankSoal.length && !window.forceSubmit) {
-            return alert("Belum semua soal dijawab!");
-        }
-
-        let benar = 0;
-        bankSoal.forEach((s, i) => { if(user.jawaban[i] === s.jawabanBenar) benar++; });
-        user.nilai = Math.round((benar / bankSoal.length) * 100);
-
-        db.ref('hasil/' + user.nama).update({
-            nilai: user.nilai,
-            waktu: new Date().toLocaleString(),
-            status: "Selesai"
-        }).then(() => {
-            alert("Selesai! Nilai tersimpan.");
-            location.reload();
-        });
-    }
-
-    function startTimer(targetTime) {
-        if (timerInt) clearInterval(timerInt);
-        timerInt = setInterval(() => {
-            const distance = targetTime - new Date().getTime();
-            if (distance <= 0) {
-                clearInterval(timerInt);
-                window.forceSubmit = true;
-                alert("WAKTU HABIS!");
-                selesaiUjian();
-                return;
-            }
-            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((distance % (1000 * 60)) / 1000);
-            document.getElementById('timer-siswa').innerText = (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
-        }, 1000);
-    }
-
-    // --- ADMIN LOGIC ---
     function loadAdminData() {
         db.ref('token').on('value', s => document.getElementById('adm-token').value = s.val() || "");
+        
         db.ref('hasil').on('value', s => {
-            const body = document.getElementById('table-nilai-body');
-            body.innerHTML = "";
-            const data = s.val();
-            for(let k in data) {
-                const d = data[k];
-                const badgeClass = d.status === "Selesai" ? "bg-done" : "bg-working";
-                body.innerHTML += `<tr>
+            const tbody = document.getElementById('table-nilai-body');
+            tbody.innerHTML = "";
+            let i = 1;
+            s.forEach(child => {
+                const d = child.val();
+                tbody.innerHTML += `<tr>
+                    <td><input type="checkbox" class="check-hasil" value="${child.key}"></td>
+                    <td>${i++}</td>
                     <td>${d.nama}</td>
                     <td>${d.kelas}</td>
-                    <td>${d.nilai}</td>
-                    <td>${d.waktu}</td>
-                    <td><span class="badge ${badgeClass}">${d.status}</span></td>
+                    <td><strong>${d.nilai}</strong></td>
+                    <td><span class="badge ${d.status === 'Selesai' ? 'bg-done' : 'bg-working'}">${d.status}</span></td>
+                    <td><button onclick="deleteSingle('hasil', '${child.key}')">Hapus</button></td>
                 </tr>`;
-            }
+            });
+        });
+
+        db.ref('peserta').on('value', s => {
+            const tbody = document.getElementById('table-peserta-body');
+            tbody.innerHTML = "";
+            let i = 1;
+            s.forEach(child => {
+                tbody.innerHTML += `<tr>
+                    <td><input type="checkbox" class="check-peserta" value="${child.key}"></td>
+                    <td>${i++}</td>
+                    <td>${child.val().nama}</td>
+                    <td>${child.val().kelas}</td>
+                    <td><button onclick="deleteSingle('peserta', '${child.key}')">Hapus</button></td>
+                </tr>`;
+            });
+        });
+
+        db.ref('timer_pusat').on('value', s => {
+            if(!s.val()) return;
+            if(window.admInt) clearInterval(window.admInt);
+            window.admInt = setInterval(() => {
+                const dist = s.val() - new Date().getTime();
+                const display = document.getElementById('adm-timer-display');
+                if(dist <= 0) {
+                    display.innerText = "00:00:00";
+                    document.getElementById('adm-timer-status').innerText = "WAKTU HABIS";
+                } else {
+                    const h = Math.floor(dist / 3600000);
+                    const m = Math.floor((dist % 3600000) / 60000);
+                    const sc = Math.floor((dist % 60000) / 1000);
+                    display.innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${sc.toString().padStart(2,'0')}`;
+                    document.getElementById('adm-timer-status').innerText = "Ujian Berjalan...";
+                }
+            }, 1000);
         });
     }
 
+    function updateToken() { db.ref('token').set(document.getElementById('adm-token').value.toUpperCase()); alert("Ok"); }
+    function updateTimer() {
+        const m = document.getElementById('adm-timer').value;
+        db.ref('timer_pusat').set(new Date().getTime() + (m * 60000));
+        alert("Waktu diset!");
+    }
+    function addPesertaManual() {
+        const n = document.getElementById('add-nama').value;
+        const k = document.getElementById('add-kelas').value;
+        if(n && k) db.ref('peserta').push({ nama: n, kelas: k });
+    }
+    function toggleSelectAll(cls, el) { document.querySelectorAll('.'+cls).forEach(c => c.checked = el.checked); }
+    function deleteSingle(path, key) { if(confirm("Hapus?")) db.ref(path+'/'+key).remove(); }
+    function bulkDelete(path) {
+        const selected = document.querySelectorAll('.check-'+path+':checked');
+        if(confirm("Hapus "+selected.length+" data?")) selected.forEach(c => db.ref(path+'/'+c.value).remove());
+    }
+    function exportExcel(id, name) { XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById(id)), name+".xlsx"); }
     function switchTab(id, el) {
         document.querySelectorAll('.admin-tab').forEach(t => t.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
         document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
         el.classList.add('active');
     }
-    function clearData() { if(confirm("Hapus Semua?")) db.ref('hasil').remove(); }
-    function updateToken() { db.ref('token').set(document.getElementById('adm-token').value.toUpperCase()); }
-    function updateTimer() { 
-        const min = document.getElementById('adm-timer').value;
-        db.ref('timer_pusat').set(new Date().getTime() + (min * 60000)); 
-    }
     function prosesExcel() {
         const file = document.getElementById('input-excel').files[0];
-        if(!file) return alert("Pilih file!");
         const reader = new FileReader();
         reader.onload = (e) => {
-            const data = XLSX.utils.sheet_to_json(XLSX.read(new Uint8Array(e.target.result), {type: 'array'}).Sheets[XLSX.read(new Uint8Array(e.target.result), {type: 'array'}).SheetNames[0]]);
-            db.ref('soal').set(data).then(() => alert("Berhasil Import " + data.length + " Soal"));
+            const data = XLSX.utils.sheet_to_json(XLSX.read(new Uint8Array(e.target.result), {type:'array'}).Sheets[XLSX.read(new Uint8Array(e.target.result), {type:'array'}).SheetNames[0]]);
+            db.ref('soal').set(data).then(() => alert("Soal Berhasil di Import!"));
         };
         reader.readAsArrayBuffer(file);
     }
-    function exportExcel() { XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById('table-nilai')), "Hasil_ANBK.xlsx"); }
+    function prosesExcelPeserta() {
+        const file = document.getElementById('input-excel-peserta').files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const data = XLSX.utils.sheet_to_json(XLSX.read(new Uint8Array(e.target.result), {type:'array'}).Sheets[XLSX.read(new Uint8Array(e.target.result), {type:'array'}).SheetNames[0]]);
+            data.forEach(p => db.ref('peserta').push({ nama: p.nama, kelas: p.kelas }));
+            alert("Peserta Berhasil!");
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    // --- LOGIKA SISWA ---
+    function keKonfirmasi() {
+        user.nama = document.getElementById('in-nama').value.trim();
+        user.kelas = document.getElementById('in-kelas').value.trim();
+        if(!user.nama) return alert("Nama kosong!");
+        db.ref('peserta').once('value', s => {
+            let ada = false;
+            s.forEach(c => { if(c.val().nama.toLowerCase() === user.nama.toLowerCase()) ada = true; });
+            if(!ada) return alert("Nama tidak terdaftar!");
+            document.getElementById('lbl-nama').innerText = user.nama;
+            document.getElementById('view-login').classList.add('hidden');
+            document.getElementById('view-konfirmasi').classList.remove('hidden');
+        });
+    }
+
+    function mulaiUjian() {
+        const tkn = document.getElementById('in-token').value.toUpperCase();
+        db.ref('token').once('value', s => {
+            if(tkn !== s.val()) return alert("Token Salah!");
+            db.ref('soal').once('value', snap => {
+                bankSoal = snap.val();
+                if(!bankSoal) return alert("Soal belum diinput admin!");
+                isExamStarted = true;
+                db.ref('hasil/' + user.nama).set({ nama: user.nama, kelas: user.kelas, nilai: "-", status: "Mengerjakan" });
+                document.getElementById('view-konfirmasi').classList.add('hidden');
+                document.getElementById('view-soal').style.display = 'block';
+                startSiswaTimer();
+                renderNavigasi();
+                renderSoal();
+            });
+        });
+    }
+
+    function startSiswaTimer() {
+        db.ref('timer_pusat').on('value', s => {
+            if(timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                const dist = s.val() - new Date().getTime();
+                if(dist <= 0) { clearInterval(timerInterval); selesaiUjian(true); }
+                else {
+                    const m = Math.floor((dist % 3600000) / 60000);
+                    const sc = Math.floor((dist % 60000) / 1000);
+                    document.getElementById('timer-siswa').innerText = `${m.toString().padStart(2,'0')}:${sc.toString().padStart(2,'0')}`;
+                }
+            }, 1000);
+        });
+    }
+
+    function renderSoal() {
+        const s = bankSoal[currIdx];
+        document.getElementById('no-soal-title').innerText = "SOAL NO " + (currIdx + 1);
+        document.getElementById('display-pertanyaan').innerText = s.pertanyaan;
+        
+        const img = document.getElementById('display-gambar');
+        if(s.gambar && s.gambar.trim() !== "") { 
+            img.src = s.gambar; 
+            img.style.display = 'block'; 
+        } else { 
+            img.style.display = 'none'; 
+        }
+
+        const list = document.getElementById('opsi-list');
+        list.innerHTML = "";
+        ['opsiA','opsiB','opsiC','opsiD','opsiE'].forEach(k => {
+            if(s[k]) {
+                const sel = user.jawaban[currIdx] === s[k] ? 'selected' : '';
+                let isiOpsi = s[k];
+                if (typeof s[k] === 'string' && s[k].includes("http")) {
+                    isiOpsi = `<img src="${s[k]}">`;
+                }
+                list.innerHTML += `<button class="option ${sel}" onclick="pilih('${s[k]}')">${isiOpsi}</button>`;
+            }
+        });
+
+        // Logika tampilan tombol navigasi
+        document.getElementById('btn-next').style.display = (currIdx === bankSoal.length - 1) ? 'none' : 'block';
+        document.getElementById('btn-done').style.display = (currIdx === bankSoal.length - 1) ? 'block' : 'none';
+        
+        updateNavStatus();
+    }
+
+    function renderNavigasi() {
+        const g = document.getElementById('grid-nomor');
+        g.innerHTML = "";
+        bankSoal.forEach((_, i) => {
+            g.innerHTML += `<button id="nav-${i}" class="btn-nomor" onclick="currIdx=${i};renderSoal()">${i+1}</button>`;
+        });
+    }
+
+    function updateNavStatus() {
+        bankSoal.forEach((_, i) => {
+            const b = document.getElementById('nav-'+i);
+            if(!b) return;
+            b.className = "btn-nomor";
+            if(user.jawaban[i]) b.classList.add('filled');
+            if(user.ragu[i]) b.classList.add('doubt');
+            if(i === currIdx) b.classList.add('active-now');
+        });
+    }
+
+    function pilih(v) { 
+        user.jawaban[currIdx] = v; 
+        renderSoal(); 
+    }
+
+    function toggleRagu() { 
+        user.ragu[currIdx] = !user.ragu[currIdx]; 
+        updateNavStatus(); 
+    }
+
+    function navSoal(n) { 
+        if(currIdx + n >= 0 && currIdx + n < bankSoal.length) {
+            currIdx += n; 
+            renderSoal(); 
+        }
+    }
+
+    // --- PERBAIKAN FUNGSI SELESAI UJIAN ---
+    function selesaiUjian(auto = false) {
+        if (auto) { finalisasiNilai(); return; }
+
+        // 1. Cek Ragu-ragu
+        let adaRagu = false;
+        for (let i = 0; i < bankSoal.length; i++) {
+            if (user.ragu[i] === true) { adaRagu = true; break; }
+        }
+        if (adaRagu) {
+            alert("⚠️ PERINGATAN: Masih ada jawaban yang ditandai RAGU-RAGU.");
+            return;
+        }
+
+        // 2. Cek Kosong
+        let soalKosong = [];
+        for (let i = 0; i < bankSoal.length; i++) {
+            if (!user.jawaban[i]) { soalKosong.push(i + 1); }
+        }
+        if (soalKosong.length > 0) {
+            alert("⚠️ GAGAL SELESAI: Anda belum menjawab semua soal: " + soalKosong.join(", "));
+            return;
+        }
+
+        // 3. Konfirmasi
+        if (confirm("Apakah Anda yakin ingin mengakhiri ujian?")) {
+            finalisasiNilai();
+        }
+    }
+
+    function finalisasiNilai() {
+        isExamStarted = false;
+        let b = 0;
+        bankSoal.forEach((s, i) => { 
+            if(user.jawaban[i] === s.jawabanBenar) b++; 
+        });
+        let n = Math.round((b / bankSoal.length) * 100);
+        
+        db.ref('hasil/' + user.nama).update({ 
+            nilai: n, 
+            status: "Selesai" 
+        }).then(() => {
+            alert("Ujian Selesai! Nilai Anda telah terkirim.");
+            location.reload();
+        });
+    }
 </script>
 </body>
 </html>
